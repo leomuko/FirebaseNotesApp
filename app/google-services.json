@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "381544960076",
+    "firebase_url": "https://twekobeinterview-b6a1b.firebaseio.com",
+    "project_id": "twekobeinterview-b6a1b",
+    "storage_bucket": "twekobeinterview-b6a1b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381544960076:android:4eab20a39527260014a4e9",
+        "android_client_info": {
+          "package_name": "com.example.firebasenotes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "381544960076-m02fu5kdm707svr0ro8qg21m7iukldoi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6mASw4BJ0f902KglQD-OeQMeR2TejnP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "381544960076-m02fu5kdm707svr0ro8qg21m7iukldoi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
