@@ -15,9 +15,13 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton mAddButton;
     public int mADD_NEW_NOTE = 0;
     public int mEDIT_NEW_NOTE = 1;
+    private DatabaseReference mDbRef;
+    private List<NoteInfo> mNotesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +40,10 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         String userUid = mAuth.getUid();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = db.getReference("user_notes/" + userUid);
+        mDbRef = db.getReference("user_notes/" + userUid);
 
         mAddButton = findViewById(R.id.add_notes_button);
-
+        mNotesList = new ArrayList<>();
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, mADD_NEW_NOTE);
             }
         });
-        initialiseDisplayContent();
+
     }
 
     private void initialiseDisplayContent() {
@@ -54,14 +60,36 @@ public class MainActivity extends AppCompatActivity {
         final LinearLayoutManager notesLayoutManager = new LinearLayoutManager(this);
         recyclerNotes.setLayoutManager(notesLayoutManager);
 
-        List<NoteInfo> notes = loadUserNotes();
-        final NotesRecyclerAdapter notesRecyclerAdapter = new NotesRecyclerAdapter(this,notes);
+
+        final NotesRecyclerAdapter notesRecyclerAdapter = new NotesRecyclerAdapter(this,mNotesList);
         recyclerNotes.setAdapter(notesRecyclerAdapter);
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadUserNotes();
+    }
+
     private List<NoteInfo> loadUserNotes() {
-        
+        mDbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                mNotesList.clear();
+                for(DataSnapshot notesSnapShot: snapshot.getChildren()){
+                    NoteInfo note = notesSnapShot.getValue(NoteInfo.class);
+                    mNotesList.add(note);
+                }
+                initialiseDisplayContent();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         return null;
     }
 
