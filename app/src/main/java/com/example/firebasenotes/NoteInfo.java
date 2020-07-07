@@ -1,8 +1,10 @@
 package com.example.firebasenotes;
 
-public class NoteInfo {
-    private int mNoteId = 0;
-    private static int nextNumber = 0;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class NoteInfo implements Parcelable {
+    private String mNoteId ;
     private String mUID;
     private String mNoteTitle;
     private String mNoteDetails;
@@ -12,14 +14,31 @@ public class NoteInfo {
     }
 
     public NoteInfo( String UID, String NoteTitle, String NoteDetails){
-        mNoteId = nextNumber;
-        nextNumber++;
         mUID = UID;
         mNoteTitle = NoteTitle;
         mNoteDetails = NoteDetails;
     }
 
-    public int getNoteId() {
+    protected NoteInfo(Parcel in) {
+        mNoteId = in.readString();
+        mUID = in.readString();
+        mNoteTitle = in.readString();
+        mNoteDetails = in.readString();
+    }
+
+    public static final Creator<NoteInfo> CREATOR = new Creator<NoteInfo>() {
+        @Override
+        public NoteInfo createFromParcel(Parcel in) {
+            return new NoteInfo(in);
+        }
+
+        @Override
+        public NoteInfo[] newArray(int size) {
+            return new NoteInfo[size];
+        }
+    };
+
+    public String getNoteId() {
         return mNoteId;
     }
 
@@ -39,7 +58,7 @@ public class NoteInfo {
         mNoteDetails = noteDetails;
     }
 
-    public void setNoteId(int noteId) {
+    public void setNoteId(String noteId) {
         mNoteId = noteId;
     }
 
@@ -49,5 +68,18 @@ public class NoteInfo {
 
     public void setUID(String UID) {
         mUID = UID;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mNoteId);
+        dest.writeString(mUID);
+        dest.writeString(mNoteTitle);
+        dest.writeString(mNoteDetails);
     }
 }

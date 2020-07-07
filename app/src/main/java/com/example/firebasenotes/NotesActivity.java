@@ -32,9 +32,12 @@ public class NotesActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mNoteStatus = intent.getIntExtra("NOTE_STATUS",-1);
 
-
-
-
+        if(mNoteStatus == 1){
+            NoteInfo theNoteToEdt = intent.getParcelableExtra("NOTE_TO_EDIT");
+            mNoteText.setText("EDIT NOTE");
+            mNoteTitle.setText(theNoteToEdt.getNoteTitle());
+            mNoteDetails.setText(theNoteToEdt.getNoteDetails());
+        }
     }
 
     @Override
@@ -49,6 +52,13 @@ public class NotesActivity extends AppCompatActivity {
 
     private void editNote() {
 
+        Intent intent = getIntent();
+        NoteInfo noteToEdit = intent.getParcelableExtra("NOTE_TO_EDIT");
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("user_notes/"+ noteToEdit.getUID()).child(noteToEdit.getNoteId());
+        noteToEdit.setNoteDetails(mNoteDetails.getText().toString());
+        noteToEdit.setNoteTitle(mNoteTitle.getText().toString());
+        dbRef.setValue(noteToEdit);
+
     }
 
     private void createNewNote() {
@@ -58,10 +68,12 @@ public class NotesActivity extends AppCompatActivity {
         NoteInfo newNote = new NoteInfo();
         String noteTitle = mNoteTitle.getText().toString();
         String noteDetails = mNoteDetails.getText().toString();
+        String noteId = dbRef.getKey();
 
         if(noteDetails.isEmpty() || noteTitle.isEmpty()){
             Toast.makeText(this, "Cannot store an empty Note", Toast.LENGTH_SHORT).show();
         }else{
+            newNote.setNoteId(noteId);
             newNote.setNoteTitle(noteTitle);
             newNote.setNoteDetails(noteDetails);
             newNote.setUID(userUid);
