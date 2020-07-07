@@ -2,6 +2,8 @@ package com.example.firebasenotes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +15,10 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+        String userUid = mAuth.getUid();
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = db.getReference("user_notes/" + userUid);
+
         mAddButton = findViewById(R.id.add_notes_button);
 
         mAddButton.setOnClickListener(new View.OnClickListener() {
@@ -36,6 +46,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, mADD_NEW_NOTE);
             }
         });
+        initialiseDisplayContent();
+    }
+
+    private void initialiseDisplayContent() {
+        final RecyclerView recyclerNotes = (RecyclerView) findViewById(R.id.list_notes);
+        final LinearLayoutManager notesLayoutManager = new LinearLayoutManager(this);
+        recyclerNotes.setLayoutManager(notesLayoutManager);
+
+        List<NoteInfo> notes = loadUserNotes();
+        final NotesRecyclerAdapter notesRecyclerAdapter = new NotesRecyclerAdapter(this,notes);
+        recyclerNotes.setAdapter(notesRecyclerAdapter);
+
+    }
+
+    private List<NoteInfo> loadUserNotes() {
+        
+        return null;
     }
 
     @Override
